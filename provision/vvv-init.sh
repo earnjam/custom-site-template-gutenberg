@@ -52,6 +52,17 @@ else
   noroot wp core update --version="${WP_VERSION}"
 fi
 
+if ! $(noroot wp plugin is-installed gutenberg); then
+  cd ${VVV_PATH_TO_SITE}/public_html/wp-content/plugins
+  noroot git clone https://github.com/wordpress/gutenberg
+  cd gutenberg
+  npm install
+  npm run build
+fi
+if ! $(noroot wp plugin is-active gutenberg); then
+  wp plugin activate gutenberg
+fi
+
 cp -f "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf.tmpl" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
 
 if [ -n "$(type -t is_utility_installed)" ] && [ "$(type -t is_utility_installed)" = function ] && `is_utility_installed core tls-ca`; then
